@@ -1,6 +1,6 @@
 ### EXPORT ###
 set fish_greeting                                 # Supresses fish's intro message
-
+set SSH_CONNECTION whoami
 
 ### Load all saved ssh keys ###
 /usr/bin/ssh-add -A ^/dev/null
