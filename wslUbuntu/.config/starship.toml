@@ -27,7 +27,7 @@
   vicmd_symbol = "[❯](bold green)"
 
   [git_branch]
-  format = '\[[$symbol$branch]($style)\]' 
+  format = 'on [$symbol$branch]($style)' 
   style = "fg:207"
 
   [git_status]
