@@ -16,7 +16,16 @@ ln -nfs ~/dotfiles/wslUbuntu/.config/macchina/themes/Dracula.toml ~/.config/macc
 
 ## Garuda [restore] 
 
+
 ```
+# Nerd Fonts
+wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip ~/Downloads
+mkdir ~/.local/share/fonts/
+mkdir ~/.local/share/fonts/nerd-fonts
+unzip ~/Downloads/Meslo.zip -d ~/.local/share/fonts/nerd-fonts/
+fc-cache -vf
+
+# Random color scripts
 cd ~/dotfiles/garuda/dt-shell-color-scripts 
 makepkg -cf
 sudo pacman -U *.pkg.tar.zst
