@@ -20,4 +20,5 @@ ln -nfs ~/dotfiles/wslUbuntu/.config/macchina/themes/Dracula.toml ~/.config/macc
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 ln -nfs ~/dotfiles/garuda/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ln -nfs ~/dotfiles/garuda/.config/alacritty/dracula.yml ~/.config/alacritty/dracula.yml
+ln -nfs ~/dotfiles/garuda/.config/starship.toml ~/.config/starship.toml
 ```
