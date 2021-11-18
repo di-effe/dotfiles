@@ -14,7 +14,7 @@ ln -nfs ~/dotfiles/wslUbuntu/.config/macchina/macchina.toml ~/.config/macchina/m
 ln -nfs ~/dotfiles/wslUbuntu/.config/macchina/themes/Dracula.toml ~/.config/macchina/themes/Dracula.toml
 ```
 
-## Garuda
+## Garuda [restore] 
 
 ```
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
