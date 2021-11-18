@@ -13,7 +13,6 @@ end
 set -U __done_min_cmd_duration 10000
 set -U __done_notification_urgency_level low
 
-exa
 ## Environment setup
 # Apply .profile: use this to put fish compatible .profile stuff in
 if test -f ~/.fish_profile
@@ -35,10 +34,6 @@ if test -d ~/Applications/depot_tools
 end
 
 
-## Starship prompt
-if status --is-interactive
-   source ("/usr/bin/starship" init fish --print-full-init | psub)
-end
 
 ## Advanced command-not-found hook
 source /usr/share/doc/find-the-command/ftc.fish
@@ -173,3 +168,13 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 #if status --is-interactive
 #   neofetch
 #end
+
+## DT Random color scripts
+if status --is-interactive
+   colorscript --random
+end
+
+## Starship prompt
+if status --is-interactive
+   source ("/usr/bin/starship" init fish --print-full-init | psub)
+end

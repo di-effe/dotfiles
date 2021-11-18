@@ -17,6 +17,10 @@ ln -nfs ~/dotfiles/wslUbuntu/.config/macchina/themes/Dracula.toml ~/.config/macc
 ## Garuda [restore] 
 
 ```
+cd ~/dotfiles/garuda/dt-shell-color-scripts 
+makepkg -cf
+sudo pacman -U *.pkg.tar.zst
+
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 ln -nfs ~/dotfiles/garuda/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ln -nfs ~/dotfiles/garuda/.config/alacritty/dracula.yml ~/.config/alacritty/dracula.yml

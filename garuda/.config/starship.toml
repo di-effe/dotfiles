@@ -1,6 +1,6 @@
 ## FIRST LINE/ROW: Info & Status
 [username]
-format = " [$user]($style)@"
+format = "[$user]($style)@"
 style_user = "bold #6272a4"
 style_root = "bold #6272a4"
 show_always = true
@@ -22,7 +22,7 @@ truncation_symbol = "repo: "
 
 # Before all the version info (python, nodejs, php, etc.)
 [git_status]
-style = "dimmed white"
+style = "#ffb86c"
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
@@ -38,18 +38,8 @@ disabled = true
 ## SECOND LINE/ROW: Prompt
 # Somethere at the beginning
 
-
-# Prompt: param 2 
+# Prompt: param 1
 [character]
-success_symbol = '[❯](bold fg:177)'
+success_symbol = '[❯](bold #bd93f9)'
 error_symbol = '[❯](bold red)'
-
-# SYMBOLS
-[status]
-symbol = "🔴"
-format = '[\[$symbol$status_common_meaning$status_signal_name$status_maybe_int\]]($style)'
-map_symbol = true
-disabled = false
-
-
 
