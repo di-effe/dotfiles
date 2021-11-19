@@ -1,0 +1,53 @@
+#colo for a complete reference, visit
+# https://github.com/Macchina-CLI/macchina/wiki/Theme-Documentation
+
+hide_ascii = true
+prefer_small_ascii = false
+spacing = 0
+padding = 0
+separator = "❯"
+key_color = "Cyan"
+separator_color = "LightMagenta"
+
+[bar]
+glyph = "⭘"
+symbol_open = ""
+symbol_close = ""
+visible = true
+
+[box]
+title = " Dracula "
+visible = false
+
+[box.inner_margin]
+x = 0
+y = 0
+
+#[custom_ascii]
+#color = "LightMagenta"
+# Uncomment to use your own ASCII art.
+# path = "path_to.ascii"
+
+[randomize]
+key_color = false
+separator_color = false
+
+[keys]
+host = "Host"
+kernel = "Kernel"
+battery = "Battery"
+os = "OS"
+de = "DE"
+wm = "WM"
+distro = "Distro"
+terminal = "Terminal"
+shell = "Shell"
+packages = "Packages"
+uptime = "Uptime"
+memory = "Memory"
+machine = "Machine"
+local_ip = "IP"
+backlight = "Brightness"
+resolution = "Resolution"
+cpu_load = "CPU Load"
+cpu = "CPU"

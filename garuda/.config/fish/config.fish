@@ -163,18 +163,16 @@ alias jctl="journalctl -p 3 -xb"
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 
-
-## Run paleofetch if session is interactive
-#if status --is-interactive
-#   neofetch
-#end
-
-## DT Random color scripts
 if status --is-interactive
-   colorscript --random
+  ## Macchina CLI
+  macchina
+  ## DT Random color scripts
+  colorscript --random
+  ## Starship prompt
+  source ("/usr/bin/starship" init fish --print-full-init | psub)
 end
 
 ## Starship prompt
-if status --is-interactive
-   source ("/usr/bin/starship" init fish --print-full-init | psub)
-end
+#if status --is-interactive
+#  source ("/usr/bin/starship" init fish --print-full-init | psub)
+#end

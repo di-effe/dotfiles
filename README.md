@@ -30,8 +30,19 @@ cd ~/dotfiles/garuda/dt-shell-color-scripts
 makepkg -cf
 sudo pacman -U *.pkg.tar.zst
 
+# Macchina
+git clone https://aur.archlinux.org/macchina-git.git
+cd macchina
+makepkg -si
+cd
+rm -rf macchina
+mkdir ~/.config/macchina
+mkdir ~/.config/macchina/themes
+
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 ln -nfs ~/dotfiles/garuda/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ln -nfs ~/dotfiles/garuda/.config/alacritty/dracula.yml ~/.config/alacritty/dracula.yml
 ln -nfs ~/dotfiles/garuda/.config/starship.toml ~/.config/starship.toml
+ln -nfs ~/dotfiles/garuda/.config/macchina/macchina.toml ~/.config/macchina/macchina.toml
+ln -nfs ~/dotfiles/garuda/.config/macchina/themes/Dracula.toml ~/.config/macchina/themes/Dracula.toml
 ```
