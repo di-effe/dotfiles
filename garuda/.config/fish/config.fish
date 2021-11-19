@@ -163,6 +163,8 @@ alias jctl="journalctl -p 3 -xb"
 alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 
+## Setup terminal
+
 if status --is-interactive
   ## Macchina CLI
   macchina
@@ -171,8 +173,3 @@ if status --is-interactive
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
 end
-
-## Starship prompt
-#if status --is-interactive
-#  source ("/usr/bin/starship" init fish --print-full-init | psub)
-#end

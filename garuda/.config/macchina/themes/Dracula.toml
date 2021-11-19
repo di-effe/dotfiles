@@ -3,7 +3,7 @@
 
 hide_ascii = true
 prefer_small_ascii = false
-spacing = 0
+spacing = 2
 padding = 0
 separator = "❯"
 key_color = "Cyan"
@@ -20,7 +20,7 @@ title = " Dracula "
 visible = false
 
 [box.inner_margin]
-x = 0
+x = 1
 y = 0
 
 #[custom_ascii]
