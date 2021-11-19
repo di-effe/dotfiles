@@ -167,9 +167,9 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 if status --is-interactive
   ## Macchina CLI
-  macchina
+  #macchina
   ## DT Random color scripts
-  colorscript --random
+  #colorscript --random
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
 end

@@ -29,18 +29,21 @@ fc-cache -vf
 ## Fish config & Dracula theme
 ```
 wget https://raw.githubusercontent.com/dracula/fish/master/conf.d/dracula.fish -P ~/.config/fish/conf.d/ 
+mv ~/.config/fish/config.fish ~/.config/fish/config.fish.bak
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 exec fish
 ```
 
 ## Alacritty config & Dracula theme
 ```
+mv ~/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml.bak
 ln -nfs ~/dotfiles/garuda/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml
 ln -nfs ~/dotfiles/garuda/.config/alacritty/dracula.yml ~/.config/alacritty/dracula.yml
 ```
 
 ## Starship prompt 
 ```
+mv ~/.config/starship.toml ~/.config/starship.toml.bak
 ln -nfs ~/dotfiles/garuda/.config/starship.toml ~/.config/starship.toml
 ```
 
