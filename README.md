@@ -29,6 +29,9 @@ fc-cache -vf
 ## Fish config & Dracula theme
 ```
 wget https://raw.githubusercontent.com/dracula/fish/master/conf.d/dracula.fish -P ~/.config/fish/conf.d/ 
+curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
+fisher install jorgebucaran/spark.fish
+sudo pacman -S lolcat
 mv ~/.config/fish/config.fish ~/.config/fish/config.fish.bak
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 exec fish
@@ -41,7 +44,7 @@ ln -nfs ~/dotfiles/garuda/.config/alacritty/alacritty.yml ~/.config/alacritty/al
 ln -nfs ~/dotfiles/garuda/.config/alacritty/dracula.yml ~/.config/alacritty/dracula.yml
 ```
 
-## Starship prompt 
+## Starship config & Dracula theme
 ```
 mv ~/.config/starship.toml ~/.config/starship.toml.bak
 ln -nfs ~/dotfiles/garuda/.config/starship.toml ~/.config/starship.toml
@@ -66,14 +69,4 @@ mkdir -p ~/.vim/pack/themes/start
 cd ~/.vim/pack/themes/start
 git clone https://github.com/dracula/vim.git dracula
 ln -nfs ~/dotfiles/garuda/.vimrc ~/.vimrc
-```
-
-
-
-
-## Random color scripts
-```
-cd ~/dotfiles/garuda/dt-shell-color-scripts 
-makepkg -cf
-sudo pacman -U *.pkg.tar.zst
 ```

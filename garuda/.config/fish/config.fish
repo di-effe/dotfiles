@@ -88,8 +88,12 @@ function copy
     end
 end
 
+
+
+
 ## Useful aliases
 alias reload='exec fish'
+alias clear='echo -en "\x1b[2J\x1b[1;1H" ; seq 1 (tput cols) | sort -R | spark | lolcat'
 
 # Replace ls with exa
 alias ls='exa -al --color=always --group-directories-first --icons' # preferred listing
@@ -167,9 +171,9 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 if status --is-interactive
   ## Macchina CLI
-  #macchina
-  ## DT Random color scripts
-  #colorscript --random
+  macchina
+  ## Random color spark
+  seq 80 | sort --random-sort | spark | lolcat
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
 end
