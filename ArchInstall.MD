@@ -23,7 +23,7 @@ cfdisk /dev/sda
 - Swap
 - Root
 
-Format EFI boot partition
+Format EFI boot partitionmkf
 ```
 mkfs.fat -F32 /dev/sda1
 ```
@@ -32,45 +32,47 @@ Swap
 mkswap /dev/sda2
 swapon /dev/sda2
 ```
-Filesystem
-```
-mkfs.ext4 /dev/sda3
-mount /dev/sda3 /mnt
-mkdir /mnt/boot
-mkdir /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
-```
 
-Filesystem BTRFS
+Filesystem 
 ```
 mkfs.btrfs /dev/sda3
 mount /dev/sda3 /mnt
-btrfs subvolume create /mnt/@
-btrfs subvolume create /mnt/@home
+btrfs su cr /mnt/@
+btrfs su cr /mnt/@home
+btrfs su cr /mnt/@var
+btrfs su cr /mnt/@opt
+btrfs su cr /mnt/@tmp
+btrfs su cr /mnt/@.snapshots
 umount -R /mnt
-mount -o subvol=@ /dev/sda3 /mnt
-mkdir -p /mnt/home
-mount -o subvol=@home /dev/sda3 /mnt/home
-mkdir /mnt/boot
-mkdir /mnt/boot/efi
-mount /dev/sda1 /mnt/boot/efi
+
+mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@ /dev/sda3 /mnt
+mkdir /mnt/{boot,home,var,opt,tmp,.snapshots}
+mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@home /dev/sda3 /mnt/home
+mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@opt /dev/sda3 /mnt/opt
+mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@tmp /dev/sda3 /mnt/tmp
+mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@.snapshots /dev/sda3 /mnt/.snapshots
+mount -o subvol=@var /dev/sda3 /mnt/var
+mount /dev/sda1 /mnt/boot
 ```
 
-## Pacman mirrors
+## Update mirrors
 ```
-pacman -S reflector 
-reflector -c "IT" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
 pacman -Syy
 ```
 
-## Install
+## Install (AMD)
 ```
-pacstrap /mnt base base-devel linux linux-firmware nano
+pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs
 ```
 
-## Install BTRFS
+## Install (Intel)
 ```
-pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs grub-btrfs
+pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs
+```
+
+## Install (VMs)
+```
+pacstrap /mnt base linux linux-firmware nano btrfs-progs
 ```
 
 ## Create fstab
@@ -83,10 +85,9 @@ genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt
 ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
 hwclock --systohc
-pacman -S nano
 nano /etc/locale.gen
 locale-gen
-echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo LANG=en_US.UTF-8 > /etc/locale.conf
 ```
 
 This can done later
@@ -104,7 +105,7 @@ echo "LC_TIME=it_IT.UTF-8" >> /etc/locale.conf
 
 Update keymap for US International with accented chars support
 ```
-echo KEYMAP=us-acentos >> /etc/vconsole.conf
+echo KEYMAP=us-acentos > /etc/vconsole.conf
 ```
 
 Hostname & Hosts
@@ -119,60 +120,156 @@ ff02::1    ip6-allnodes
 ff02::2    ip6-allrouters
 ```
 
-Network manager
-```
-pacman -S networkmanager 
-systemctl enable NetworkManager
-```
 
 Create user and enable sudo
 ```
 passwd 
 useradd -m -g users -G audio,video,network,wheel,storage,rfkill -s /bin/bash david
 passwd david
+pacman -S sudo
 EDITOR=nano visudo
+```
+
+Install other packages
+```
+pacman -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet 
+pacman -S wpa_supplicant dialog os-prober mtools dosfstools reflector git snapper alacritty htop wget
+pacman -S bluez bluez-utils xdg-utils xdg-user-dirs	
+systemctl enable NetworkManager
+systemctl enable bluetooth
+reflector -c "IT" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
+```
+
+Adding btrfs module to mkinitcpio (MODULES=(btrfs)
+```
+nano /etc/mkinitcpio.conf
+mkinitcpio -p linux
 ```
 
 GRUB
 ```
-pacman -S grub efibootmgr
-grub-install --target=x86_64-efi --efi-directory=/boot/efi
+grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
 Only for virtualbox
 ```
-mkdir /boot/efi/EFI/boot
-cp /boot/efi/EFI/arch/grubx64.efi /boot/efi/EFI/boot/bootx64.efi
+mkdir /boot/EFI/boot
+cp /boot/EFI/Arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 ```
 
 Reboot
 ```
 exit
-umount -a
+umount -l /mnt
 reboot
 ```
 
 
-# Arch [Xorg, LidhtDM, Qtile] 
 
+
+
+
+
+# Arch [KDE] 
+
+
+For AMD video cards
 ```
-sudo pacman -S xorg-server xorg-apps xorg-xinit xterm
-sudo pacman -S lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
-sudo systemctl enable lightdm.service
-sudo pacman -S qtile
-mkdir -p ~/.config/qtile/
-cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
+sudo pacman -S xf86-video-amdgpu
 ```
 
-
-# Arch [Xorg, LidhtDM, Qtile] 
-
+For ATI video cards
 ```
-sudo pacman -S xorg-server xorg-apps xorg-xinit xterm
-sudo pacman -S sddm
+sudo pacman -S xf86-video-ati
+```
+For Intel video cards
+```
+sudo pacman -S xf86-video-intel
+```
+For nVidia video cards
+```
+sudo pacman -S nvidia
+```
+
+Install xorg
+```
+sudo pacman -S xorg
+```
+
+Install KDE & Applications
+5 13 14 44 48 49 51 52 53 58 106 132 142 145 153 170
+```
+sudo pacman -S plasma-meta
+sudo pacman -S kde-applications
+```
+
+Enable SDDM
+```
+sudo systemctl enable sddm
+```
+
+Reboot
+
+
+# Arch [Qtile] 
+
+
+For AMD video cards
+```
+sudo pacman -S xf86-video-amdgpu
+```
+
+For ATI video cards
+```
+sudo pacman -S xf86-video-ati
+```
+For Intel video cards
+```
+sudo pacman -S xf86-video-intel
+```
+For nVidia video cards
+```
+sudo pacman -S nvidia
+```
+
+Install Qtile
+```
+sudo pacman -S xorg-server xorg-apps xorg-xinit xterm alacritty sddm
 sudo systemctl enable sddm.service
 sudo pacman -S qtile
 mkdir -p ~/.config/qtile/
 cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
+```
+
+
+
+# Arch [Qtile] 
+
+
+For AMD video cards
+```
+sudo pacman -S xf86-video-amdgpu
+```
+
+For ATI video cards
+```
+sudo pacman -S xf86-video-ati
+```
+For Intel video cards
+```
+sudo pacman -S xf86-video-intel
+```
+For nVidia video cards
+```
+sudo pacman -S nvidia
+```
+
+Install Awesome
+```
+sudo pacman -S xorg-server xorg-apps xorg-xinit xterm alacritty sddm
+sudo systemctl enable sddm.service
+sudo pacman -S awesome
+mkdir -p ~/.config/awesome/
+cp /etc/xdg/awesome/rc.lua ~/.config/awesome/
 ```
