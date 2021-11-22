@@ -244,7 +244,7 @@ cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
 
 
 
-# Arch [Qtile] 
+# Arch [Awesome] 
 
 
 For AMD video cards
