@@ -41,6 +41,21 @@ mkdir /mnt/boot/efi
 mount /dev/sda1 /mnt/boot/efi
 ```
 
+Filesystem BTRFS
+```
+mkfs.btrfs /dev/sda3
+mount /dev/sda3 /mnt
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@home
+umount -R /mnt
+mount -o subvol=@ /dev/sda3 /mnt
+mkdir -p /mnt/home
+mount -o subvol=@home /dev/sda3 /mnt/home
+mkdir /mnt/boot
+mkdir /mnt/boot/efi
+mount /dev/sda1 /mnt/boot/efi
+```
+
 ## Pacman mirrors
 ```
 pacman -S reflector 
@@ -51,6 +66,11 @@ pacman -Syy
 ## Install
 ```
 pacstrap /mnt base base-devel linux linux-firmware nano
+```
+
+## Install BTRFS
+```
+pacstrap /mnt base base-devel linux linux-firmware nano btrfs-progs grub-btrfs
 ```
 
 ## Create fstab
@@ -140,6 +160,18 @@ reboot
 sudo pacman -S xorg-server xorg-apps xorg-xinit xterm
 sudo pacman -S lightdm lightdm-gtk-greeter lightdm-gtk-greeter-settings
 sudo systemctl enable lightdm.service
+sudo pacman -S qtile
+mkdir -p ~/.config/qtile/
+cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
+```
+
+
+# Arch [Xorg, LidhtDM, Qtile] 
+
+```
+sudo pacman -S xorg-server xorg-apps xorg-xinit xterm
+sudo pacman -S sddm
+sudo systemctl enable sddm.service
 sudo pacman -S qtile
 mkdir -p ~/.config/qtile/
 cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
