@@ -1,9 +1,15 @@
 # Arch [UEFI install] 
 
-## NTP
+Rif: https://www.ordinatechnic.com/distribution-specific-guides/Arch/an-arch-linux-installation-on-a-btrfs-filesystem-with-snapper-for-system-snapshots-and-rollbacks
+
+## Init
 ``` 
 timedatectl set-ntp true
 timedatectl status
+pacman-key --init  
+pacman-key --populate archlinux
+pacman -Syy
+pacman -S btrfs-progs nano which tree
 ```
 
 ## PARTITIONS
@@ -18,67 +24,181 @@ wipefs -a /dev/sda
 Parition disk
 ```
 cfdisk /dev/sda
-```
+```time
 - EFI boot (500Mb~1GB)
 - Swap
-- Root
+- Root (btrfs)
+- Home (ext4)
 
-Format EFI boot partitionmkf
+Format partitions
 ```
 mkfs.fat -F32 /dev/sda1
-```
-Swap
-```
 mkswap /dev/sda2
 swapon /dev/sda2
+mkfs.btrfs -L ROOT -f -n 32k /dev/sda3
+mkfs.ext4 -L HOME /dev/sda4
+
 ```
 
-Filesystem 
+
+Volumes 
 ```
-mkfs.btrfs /dev/sda3
+
 mount /dev/sda3 /mnt
-btrfs su cr /mnt/@
-btrfs su cr /mnt/@home
-btrfs su cr /mnt/@var
-btrfs su cr /mnt/@opt
-btrfs su cr /mnt/@tmp
-btrfs su cr /mnt/@.snapshots
-umount -R /mnt
 
-mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@ /dev/sda3 /mnt
-mkdir /mnt/{boot,home,var,opt,tmp,.snapshots}
-mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@home /dev/sda3 /mnt/home
-mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@opt /dev/sda3 /mnt/opt
-mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@tmp /dev/sda3 /mnt/tmp
-mount -o noatime,commit=120,compress=zstd,space_cache,subvol=@.snapshots /dev/sda3 /mnt/.snapshots
-mount -o subvol=@var /dev/sda3 /mnt/var
+btrfs subvolume create /mnt/@
+btrfs subvolume create /mnt/@/.snapshots
+mkdir /mnt/@/.snapshots/1
+btrfs subvolume create /mnt/@/.snapshots/1/snapshot
+mkdir /mnt/@/boot
+btrfs subvolume create /mnt/@/boot/grub
+btrfs subvolume create /mnt/@/opt
+btrfs subvolume create /mnt/@/root
+btrfs subvolume create /mnt/@/srv
+btrfs subvolume create /mnt/@/tmp
+mkdir /mnt/@/usr
+btrfs subvolume create /mnt/@/usr/local
+mkdir /mnt/@/var
+btrfs subvolume create /mnt/@/var/cache
+btrfs subvolume create /mnt/@/var/log
+btrfs subvolume create /mnt/@/var/spool
+btrfs subvolume create /mnt/@/var/tmp
+```
+
+Create the metadata required by Snapperfor the initial installation snapshot.
+```
+nano /mnt/@/.snapshots/1/info.xml
+```
+Replace date and time (date +"%Y-%m-%d %H:%M:%S")
+```
+<?xml version="1.0"?>
+<snapshot>
+	<type>single</type>
+	<num>1</num>
+	<date>2021-11-01 21:56:17</date>
+	<description>First Root Filesystem Created at Installation</description>
+</snapshot>
+```
+
+Set default volume to the initial installation snapshot
+Get ID
+```
+btrfs subvolume get-default /mnt
+```
+Make the initial snapshot subvolume, /@/mnt/.snapshots/1/snapshot, the default subvolume.
+```
+btrfs subvolume set-default $(btrfs subvolume list /mnt | grep "@/.snapshots/1/snapshot" | grep -oP '(?<=ID )[0-9]+') /mnt
+```
+Check output
+```
+btrfs subvolume get-default /mnt
+```
+
+Enable quota
+```
+btrfs quota enable /mnt
+```
+
+Disable copy-on-write for the /@/var subvolumes this will require the nodatacow mount option, which will disable compression for these subvolumes.
+
+
+```
+chattr +C /mnt/@/var/cache
+chattr +C /mnt/@/var/log
+chattr +C /mnt/@/var/spool
+chattr +C /mnt/@/var/tmp
+```
+
+
+Unmount the Btrfs filesystem.
+```
+umount /mnt
+```
+
+
+Mount the Btrfs Filesystem
+```
+mount -o compress=zstd /dev/sda3 /mnt
+
+mkdir /mnt/{.snapshots,opt,root,srv,tmp,home}
+mkdir -p /mnt/boot/grub
+mkdir -p /mnt/usr/local
+mkdir -p /mnt/var/cache
+mkdir -p /mnt/var/log
+mkdir -p /mnt/var/spool
+mkdir -p /mnt/var/tmp
+
+
+mount -o subvol=@/.snapshots,compress=zstd /dev/sda3 /mnt/.snapshots
+mount -o subvol=@/opt,compress=zstd /dev/sda3 /mnt/opt
+mount -o subvol=@/root,compress=zstd /dev/sda3 /mnt/root
+mount -o subvol=@/srv,compress=zstd /dev/sda3 /mnt/srv
+mount -o subvol=@/tmp,compress=zstd /dev/sda3 /mnt/tmp
+mount -o subvol=@/usr/local,compress=zstd /dev/sda3 /mnt/usr/local
+mount -o subvol=@/var/cache,nodatacow /dev/sda3 /mnt/var/cache
+mount -o subvol=@/var/log,nodatacow /dev/sda3 /mnt/var/log
+mount -o subvol=@/var/spool,nodatacow /dev/sda3 /mnt/var/spool
+mount -o subvol=@/var/tmp,nodatacow /dev/sda3 /mnt/var/tmp
+
 mount /dev/sda1 /mnt/boot
-```
+mount /dev/sda4 /mnt/home
 
-## Update mirrors
-```
-pacman -Syy
 ```
 
 ## Install (AMD)
 ```
-pacstrap /mnt base linux linux-firmware nano intel-ucode btrfs-progs
+pacstrap /mnt base linux linux-firmware intel-ucode
 ```
 
 ## Install (Intel)
 ```
-pacstrap /mnt base linux linux-firmware nano amd-ucode btrfs-progs
+pacstrap /mnt base linux linux-firmware amd-ucode
 ```
 
 ## Install (VMs)
 ```
-pacstrap /mnt base linux linux-firmware nano btrfs-progs
+pacstrap /mnt base linux linux-firmware 
+```
+
+
+
+
+
+
+
+
+## Extra packages
+```
+pacstrap /mnt grub grub-btrfs btrfs-progs os-prober efibootmgr
+pacstrap /mnt snapper snap-pac
+pacstrap /mnt base-devel linux-headers 
+pacstrap /mnt xorg-server xorg-apps
+pacstrap /mnt sudo nano vim fish starship neofetch reflector git alacritty htop wget rust
+pacstrap /mnt man-db man-pages texinfo
+pacstrap /mnt networkmanager network-manager-applet bluez bluez-utils xdg-utils xdg-user-dirs wpa_supplicant dialog mtools dosfstools
+
 ```
 
 ## Create fstab
+
+
+Remove the subvolume identifier mount options (subvolid=258,subvol=/@/.snapshots/1/snapshot) on the line where / is the target.
+
 ```
 genfstab -U /mnt >> /mnt/etc/fstab
+nano /mnt/etc/fstab
 ```
+
+
+Edit the files /etc/grub.d/10_linux and /etc/grub.d/20_linux_xen and in both files remove
+*rootflags=subvol=${rootsubvol}*
+```
+nano /mnt/etc/grub.d/10_linux
+nano /mnt/etc/grub.d/20_linux_xen
+```
+
+
+
 
 ## Complete install
 ```
@@ -126,15 +246,11 @@ Create user and enable sudo
 passwd 
 useradd -m -g users -G audio,video,network,wheel,storage,rfkill -s /bin/bash david
 passwd david
-pacman -S sudo
 EDITOR=nano visudo
 ```
 
-Install other packages
+Enable services and set mirrors
 ```
-pacman -S grub grub-btrfs efibootmgr base-devel linux-headers networkmanager network-manager-applet 
-pacman -S wpa_supplicant dialog os-prober mtools dosfstools reflector git snapper alacritty htop wget
-pacman -S bluez bluez-utils xdg-utils xdg-user-dirs	
 systemctl enable NetworkManager
 systemctl enable bluetooth
 reflector -c "IT" -f 12 -l 10 -n 12 --save /etc/pacman.d/mirrorlist
@@ -145,6 +261,21 @@ Adding btrfs module to mkinitcpio (MODULES=(btrfs)
 nano /etc/mkinitcpio.conf
 mkinitcpio -p linux
 ```
+
+
+
+Configure snapper
+```
+umount /.snapshots
+rm -r /.snapshots
+snapper --no-dbus -c root create-config /
+btrfs subvolume delete /.snapshots
+mkdir /.snapshots
+mount -a
+chmod 750 /.snapshots
+
+```
+
 
 GRUB
 ```
@@ -158,6 +289,7 @@ mkdir /boot/EFI/boot
 cp /boot/EFI/Arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 ```
 
+
 Reboot
 ```
 exit
@@ -165,7 +297,61 @@ umount -l /mnt
 reboot
 ```
 
+Change user shell
 
+```
+chsh -s /usr/bin/fish
+```
+
+Configure AUR
+```
+mkdir AUR
+cd AUR
+git clone https://aur.archlinux.org/paru.git
+cd paru
+makepkg -sic
+paru -Sa snap-pac-grub
+```
+
+
+# Arch [Qtile] 
+
+
+For AMD video cards
+```
+sudo pacman -S xf86-video-amdgpu
+```
+
+For ATI video cards
+```
+sudo pacman -S xf86-video-ati
+```
+For Intel video cards
+```
+sudo pacman -S xf86-video-intel
+```
+For nVidia video cards
+```
+sudo pacman -S nvidia
+```
+
+Install Qtile
+```
+sudo pacman -S xorg-server xorg-apps xorg-xinit xterm alacritty sddm
+sudo systemctl enable sddm.service
+sudo pacman -S qtile
+mkdir -p ~/.config/qtile/
+cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
+```
+
+
+Install snapper gui
+```
+sudo pacman -S python3 gtk3 python-dbus python-gobject python-setuptools gtksourceview3
+git clone https://github.com/ricardo-vieira/snapper-gui/
+cd snapper-gui/
+sudo python3 setup.py install
+```
 
 
 
@@ -200,8 +386,7 @@ sudo pacman -S xorg
 Install KDE & Applications
 5 13 14 44 48 49 51 52 53 58 106 132 142 145 153 170
 ```
-sudo pacman -S plasma-meta
-sudo pacman -S kde-applications
+sudo pacman -S plasma-meta kde-applications kde-utilities kde-system dolphin-plugins kde-graphics
 ```
 
 Enable SDDM
@@ -212,35 +397,6 @@ sudo systemctl enable sddm
 Reboot
 
 
-# Arch [Qtile] 
-
-
-For AMD video cards
-```
-sudo pacman -S xf86-video-amdgpu
-```
-
-For ATI video cards
-```
-sudo pacman -S xf86-video-ati
-```
-For Intel video cards
-```
-sudo pacman -S xf86-video-intel
-```
-For nVidia video cards
-```
-sudo pacman -S nvidia
-```
-
-Install Qtile
-```
-sudo pacman -S xorg-server xorg-apps xorg-xinit xterm alacritty sddm
-sudo systemctl enable sddm.service
-sudo pacman -S qtile
-mkdir -p ~/.config/qtile/
-cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
-```
 
 
 
