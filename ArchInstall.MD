@@ -1,6 +1,6 @@
 # Arch [UEFI install] 
 
-Rif: https://www.ordinatechnic.com/distribution-specific-guides/Arch/an-arch-linux-installation-on-a-btrfs-filesystem-with-snapper-for-system-snapshots-and-rollbacks
+Ref: https://www.ordinatechnic.com/distribution-specific-guides/Arch/an-arch-linux-installation-on-a-btrfs-filesystem-with-snapper-for-system-snapshots-and-rollbacks
 
 ## Init
 ``` 
@@ -12,8 +12,15 @@ pacman -Syy
 pacman -S btrfs-progs nano which tree
 ```
 
-## PARTITIONS
-Check disk device name (/dev/sda in this example)
+## Create partitions
+Check disk device name 
+This guide will use /dev/sda as an example and will create 4 partitions:
+- EFI boot (500Mb~1GB)
+- Swap
+- Root (btrfs)
+- Home (ext4)
+
+Check disk device name 
 ```
 fdisk -l
 ```
@@ -21,14 +28,11 @@ Erase disk
 ```
 wipefs -a /dev/sda
 ```
-Parition disk
+Partition disk
 ```
 cfdisk /dev/sda
-```time
-- EFI boot (500Mb~1GB)
-- Swap
-- Root (btrfs)
-- Home (ext4)
+```
+
 
 Format partitions
 ```
@@ -37,13 +41,11 @@ mkswap /dev/sda2
 swapon /dev/sda2
 mkfs.btrfs -L ROOT -f -n 32k /dev/sda3
 mkfs.ext4 -L HOME /dev/sda4
-
 ```
 
 
-Volumes 
+## Create volumes 
 ```
-
 mount /dev/sda3 /mnt
 
 btrfs subvolume create /mnt/@
@@ -65,6 +67,8 @@ btrfs subvolume create /mnt/@/var/spool
 btrfs subvolume create /mnt/@/var/tmp
 ```
 
+## Snapper config
+
 Create the metadata required by Snapperfor the initial installation snapshot.
 ```
 nano /mnt/@/.snapshots/1/info.xml
@@ -81,7 +85,6 @@ Replace date and time (date +"%Y-%m-%d %H:%M:%S")
 ```
 
 Set default volume to the initial installation snapshot
-Get ID
 ```
 btrfs subvolume get-default /mnt
 ```
@@ -100,8 +103,6 @@ btrfs quota enable /mnt
 ```
 
 Disable copy-on-write for the /@/var subvolumes this will require the nodatacow mount option, which will disable compression for these subvolumes.
-
-
 ```
 chattr +C /mnt/@/var/cache
 chattr +C /mnt/@/var/log
@@ -109,12 +110,12 @@ chattr +C /mnt/@/var/spool
 chattr +C /mnt/@/var/tmp
 ```
 
+## Mount volumes
 
 Unmount the Btrfs filesystem.
 ```
 umount /mnt
 ```
-
 
 Mount the Btrfs Filesystem
 ```
@@ -127,7 +128,6 @@ mkdir -p /mnt/var/cache
 mkdir -p /mnt/var/log
 mkdir -p /mnt/var/spool
 mkdir -p /mnt/var/tmp
-
 
 mount -o subvol=@/.snapshots,compress=zstd /dev/sda3 /mnt/.snapshots
 mount -o subvol=@/opt,compress=zstd /dev/sda3 /mnt/opt
@@ -145,41 +145,39 @@ mount /dev/sda4 /mnt/home
 
 ```
 
-## Install (AMD)
+## Install base and kernels 
+
+AMD
 ```
 pacstrap /mnt base linux linux-firmware intel-ucode
 ```
 
-## Install (Intel)
+INTEL
 ```
 pacstrap /mnt base linux linux-firmware amd-ucode
 ```
 
-## Install (VMs)
+VM
 ```
 pacstrap /mnt base linux linux-firmware 
 ```
 
 
-
-
-
-
-
-
 ## Extra packages
 ```
 pacstrap /mnt grub grub-btrfs btrfs-progs os-prober efibootmgr
-pacstrap /mnt snapper snap-pac
 pacstrap /mnt base-devel linux-headers 
-pacstrap /mnt xorg-server xorg-apps
-pacstrap /mnt sudo nano vim fish starship neofetch reflector git alacritty htop wget rust
+pacstrap /mnt snapper snap-pac
+pacstrap /mnt sudo nano vim fish starship neofetch reflector git alacritty 
+pacstrap /mnt htop wget rust bat cups exa emacs fd lolcat 
+pacstrap /mnt adobe-source-code-pro-fonts adobe-source-sans-fonts otf-font-awesome otf-raleway ttf-ms-fonts ttf-ubuntu-font-family
 pacstrap /mnt man-db man-pages texinfo
-pacstrap /mnt networkmanager network-manager-applet bluez bluez-utils xdg-utils xdg-user-dirs wpa_supplicant dialog mtools dosfstools
+pacstrap /mnt networkmanager network-manager-applet bluez bluez-utils  wpa_supplicant dialog mtools dosfstools
+pacstrap /mnt xorg-server xorg-apps xdg-utils xdg-user-dirs lxappearance lxsession xdotool
 
 ```
 
-## Create fstab
+## fstab & brts related fixes
 
 
 Remove the subvolume identifier mount options (subvolid=258,subvol=/@/.snapshots/1/snapshot) on the line where / is the target.
@@ -198,9 +196,7 @@ nano /mnt/etc/grub.d/20_linux_xen
 ```
 
 
-
-
-## Complete install
+## Complete base config
 ```
 arch-chroot /mnt
 ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
@@ -290,7 +286,7 @@ cp /boot/EFI/Arch/grubx64.efi /boot/EFI/boot/bootx64.efi
 ```
 
 
-Reboot
+## Boot into Arch & complete config
 ```
 exit
 umount -l /mnt
@@ -310,7 +306,41 @@ cd AUR
 git clone https://aur.archlinux.org/paru.git
 cd paru
 makepkg -sic
+```
+
+Install Snap pac grub integration
+```
 paru -Sa snap-pac-grub
+```
+
+Enable snapper scrubbing
+```
+sudo systemctl enable fstrim.timer
+lsblk -o UUID /dev/sda3
+sudo systemd-escape --template btrfs-scrub@.timer --path /dev/disk/by-label/ROOT
+sudo systemctl enable <out previous command>
+sudo systemctl start <out previous command>
+```
+
+Edit snapper config
+```
+sudo nano /etc/snapper/configs/root 
+```
+QGROUP="1/0"
+NUMBER_LIMIT="10-35"
+NUMBER_LIMIT_IMPORTANT="15-25"
+TIMELINE_LIMIT_HOURLY="5"
+TIMELINE_LIMIT_DAILY="5"
+TIMELINE_LIMIT_WEEKLY="2"
+TIMELINE_LIMIT_MONTHLY="3"
+TIMELINE_LIMIT_YEARLY="0"
+
+Enable snapper timeline
+```
+sudo systemctl enable snapper-timeline.timer
+sudo systemctl start snapper-timeline.timer
+sudo systemctl enable snapper-cleanup.timer
+sudo systemctl start snapper-cleanup.timer
 ```
 
 
