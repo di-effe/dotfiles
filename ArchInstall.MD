@@ -177,7 +177,7 @@ pacstrap /mnt xorg-server xorg-apps xdg-utils xdg-user-dirs lxappearance lxsessi
 
 ```
 
-## fstab & brts related fixes
+## fstab & brtfs related fixes
 
 
 Remove the subvolume identifier mount options (subvolid=258,subvol=/@/.snapshots/1/snapshot) on the line where / is the target.
