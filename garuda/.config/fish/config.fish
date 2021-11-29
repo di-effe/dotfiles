@@ -96,11 +96,15 @@ alias reload='exec fish'
 alias clear='echo -en "\x1b[2J\x1b[1;1H" ; seq 1 (tput cols) | sort -R | spark | lolcat'
 
 # Replace ls with exa
-alias ls='exa -al --color=always --group-directories-first --icons' # preferred listing
-alias la='exa -a --color=always --group-directories-first --icons'  # all files and dirs
-alias ll='exa -l --color=always --group-directories-first --icons'  # long format
-alias lt='exa -aT --color=always --group-directories-first --icons' # tree listing
-alias l.="exa -a | egrep '^\.'"                                     # show only dotfiles
+#alias ls='exa -al --color=always --group-directories-first --icons' # preferred listing
+#alias la='exa -a --color=always --group-directories-first --icons'  # all files and dirs
+#alias ll='exa -l --color=always --group-directories-first --icons'  # long format
+#alias lt='exa -aT --color=always --group-directories-first --icons' # tree listing
+#alias l.="exa -a | egrep '^\.'"                                     # show only dotfiles
+
+alias ls='ls --color=auto' 
+alias la='ls -ah --color=auto'  
+alias ll='ls -alh --color=auto' 
 
 # Replace some more things with better alternatives
 alias cat='bat --style header --style rules --style snip --style changes --style header'
@@ -128,8 +132,8 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 alias hw='hwinfo --short'                                   # Hardware Info
 alias big="expac -H M '%m\t%n' | sort -h | nl"              # Sort installed packages according to size in MB
-alias gitpkg='pacman -Q | grep -i "\-git" | wc -l'			# List amount of -git packages
-
+alias gitpkg='pacman -Q | grep -i "\-git" | wc -l'			  # List amount of -git packages
+alias vim='nvim'
 
 # Git stuff
 alias addup='git add -u'
@@ -151,11 +155,6 @@ alias mirrord="sudo reflector --latest 50 --number 20 --sort delay --save /etc/p
 alias mirrors="sudo reflector --latest 50 --number 20 --sort score --save /etc/pacman.d/mirrorlist"
 alias mirrora="sudo reflector --latest 50 --number 20 --sort age --save /etc/pacman.d/mirrorlist"
 
-# Help people new to Arch
-alias apt='man pacman'
-alias apt-get='man pacman'
-alias please='sudo'
-alias tb='nc termbin.com 9999'
 
 # Cleanup orphaned packages
 alias cleanup='sudo pacman -Rns (pacman -Qtdq)'
@@ -171,9 +170,11 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 
 if status --is-interactive
   ## Macchina CLI
-  macchina
+  #macchina
   ## Random color spark
-  seq 80 | sort --random-sort | spark | lolcat
+  #seq 80 | sort --random-sort | spark | lolcat
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
+  ## Nord DIRCOLORS (https://www.nordtheme.com/ports/dircolors) 
+  eval (dircolors -c ~/.dir_colors)
 end
