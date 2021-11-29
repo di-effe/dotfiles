@@ -1,45 +1,43 @@
-## FIRST LINE/ROW: Info & Status
 [username]
 format = "[$user]($style)@"
-style_user = "bold #6272a4"
-style_root = "bold #6272a4"
-show_always = true
+style_user = "bold #5E81AC"
+style_root = "bold #5E81AC"
+show_always = true 
+disabled = true
 
-# Second param
 [hostname]
 format = "[$hostname]($style) in "
-style = "bold #6272a4"
+style = "bold #5E81AC"
 trim_at = "-"
 ssh_only = false
-disabled = false
+disabled = true 
 
-# Third param
 [directory]
-style = '#bd93f9'
+style = 'bold #5E81AC'
 truncation_length = 0
 truncate_to_repo = true
-truncation_symbol = "repo: "
+#truncation_symbol = "repo: "
 
-# Before all the version info (python, nodejs, php, etc.)
 [git_status]
-style = "#ffb86c"
+style = "#EBCB8B"
 ahead = "⇡${count}"
 diverged = "⇕⇡${ahead_count}⇣${behind_count}"
 behind = "⇣${count}"
 deleted = "x"
 
-# Last param in the first line/row
+[git_state]
+style = '#EBCB8B'
+
+[git_branch]
+style = '#EBCB8B'
+
 [cmd_duration]
 min_time = 1
 format = "took [$duration]($style)"
 disabled = true
 
 
-## SECOND LINE/ROW: Prompt
-# Somethere at the beginning
-
-# Prompt: param 1
 [character]
-success_symbol = '[❯](bold #bd93f9)'
-error_symbol = '[❯](bold red)'
-
+success_symbol = '[❯](bold #88C0D0)'
+error_symbol = '[❯](bold #BF616A)'
+vicmd_symbol = '[❮](bold #A3BE8C)'

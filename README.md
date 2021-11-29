@@ -8,7 +8,6 @@ clone in ~/
 ## Garuda [restore] 
 
 
-
 ## Nerd Fonts
 ```
 wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip ~/Downloads
@@ -23,6 +22,7 @@ ln -sr ~/dotfiles/garuda/.dir_colors ~/.dir_colors
 
 ## Fish config (Nord theme)
 ```
+sudo pacman -S --needed fish
 mv ~/.config/fish/config.fish ~/.config/fish/config.fish.bak
 ln -nfs ~/dotfiles/garuda/.config/fish/config.fish ~/.config/fish/config.fish
 exec fish
@@ -38,7 +38,7 @@ ln -nfs ~/dotfiles/garuda/.config/alacritty/nord.yml ~/.config/alacritty/nord.ym
 
 ## NEOVIM Nord theme
 ```
-sudo pacman -S neovim
+sudo pacman -S --needed neovim
 mkdir -p ~/.config/nvim
 ln -nfs ~/dotfiles/garuda/.config/nvim/init.vim ~/.config/nvim/init.vim
 ln -nfs ~/dotfiles/garuda/.config/nvim/colors/ ~/.config/nvim/colors
