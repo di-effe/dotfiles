@@ -18,7 +18,7 @@ fc-cache -vf
 ```
 
 ## DIR_COLORS
-ln -sr ~/dotfiles/garuda/nord-dircolors/src/dir_colors ~/.dir_colors
+ln -sr ~/dotfiles/garuda/.dir_colors ~/.dir_colors
 
 
 ## Fish config (Nord theme)
