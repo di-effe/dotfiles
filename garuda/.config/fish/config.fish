@@ -96,15 +96,15 @@ alias reload='exec fish'
 alias clear='echo -en "\x1b[2J\x1b[1;1H" ; seq 1 (tput cols) | sort -R | spark | lolcat'
 
 # Replace ls with exa
-#alias ls='exa -al --color=always --group-directories-first --icons' # preferred listing
-#alias la='exa -a --color=always --group-directories-first --icons'  # all files and dirs
-#alias ll='exa -l --color=always --group-directories-first --icons'  # long format
-#alias lt='exa -aT --color=always --group-directories-first --icons' # tree listing
-#alias l.="exa -a | egrep '^\.'"                                     # show only dotfiles
+alias ls='exa -l --color=always --group-directories-first --icons' # preferred listing
+alias la='exa -a --color=always --group-directories-first --icons'  # all files and dirs
+alias ll='exa -al --color=always --group-directories-first --icons'  # long format
+alias lt='exa -aT --color=always --group-directories-first --icons' # tree listing
+alias l.="exa -a | egrep '^\.'"                                     # show only dotfiles
 
-alias ls='ls --color=auto' 
-alias la='ls -ah --color=auto'  
-alias ll='ls -alh --color=auto' 
+#alias ls='ls --color=auto' 
+#alias la='ls -ah --color=auto'  
+#alias ll='ls -alh --color=auto' 
 
 # Replace some more things with better alternatives
 alias cat='bat --style header --style rules --style snip --style changes --style header'
