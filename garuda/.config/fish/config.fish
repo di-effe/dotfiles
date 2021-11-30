@@ -172,7 +172,7 @@ if status --is-interactive
   ## Macchina CLI
   #macchina
   ## Random color spark
-  #seq 80 | sort --random-sort | spark | lolcat
+  seq 80 | sort --random-sort | spark | lolcat
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
   ## Nord DIRCOLORS (https://www.nordtheme.com/ports/dircolors) 
