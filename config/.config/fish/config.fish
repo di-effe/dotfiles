@@ -93,7 +93,7 @@ end
 
 ## Useful aliases
 alias reload='exec fish'
-alias clear='echo -en "\x1b[2J\x1b[1;1H" ; seq 1 (tput cols) | sort -R | spark | lolcat'
+#alias clear='echo -en "\x1b[2J\x1b[1;1H" ; seq 1 (tput cols) | sort -R | spark | lolcat'
 
 # Replace ls with exa
 alias ls='exa -l --git --no-user --color=always --group-directories-first --icons' # preferred listing
@@ -169,10 +169,8 @@ alias rip="expac --timefmt='%Y-%m-%d %T' '%l\t%n %v' | sort | tail -200 | nl"
 ## Setup terminal
 
 if status --is-interactive
-  ## Macchina CLI
-  #macchina
   ## Random color spark
-  seq 80 | sort --random-sort | spark | lolcat
+  #seq 80 | sort --random-sort | spark | lolcat
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
   ## Nord DIRCOLORS (https://www.nordtheme.com/ports/dircolors) 
