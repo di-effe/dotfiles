@@ -28,10 +28,10 @@ stow dir_colors
 ```
 
 ## .config
-# - alacritty
-# - fish
-# - nvim
-# - starship
+- alacritty
+- fish
+- nvim
+- starship
 ```
 stow config
 ```
