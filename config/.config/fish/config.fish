@@ -173,6 +173,6 @@ if status --is-interactive
   #seq 80 | sort --random-sort | spark | lolcat
   ## Starship prompt
   source ("/usr/bin/starship" init fish --print-full-init | psub)
-  ## Nord DIRCOLORS (https://www.nordtheme.com/ports/dircolors) 
-  eval (dircolors -c ~/.dir_colors)
+  ## dir_colors 
+  eval (dircolors -c ~/.config/dircolors/dircolors.gruvbox)
 end

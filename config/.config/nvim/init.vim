@@ -1,4 +1,4 @@
-colorscheme nord
+colorscheme gruvbox
 
 
 " auto-install vim-plug

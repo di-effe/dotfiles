@@ -605,4 +605,4 @@ key_bindings:
 #    white:      '0xeec49a'
 
 import:
-  - ~/.config/alacritty/nord.yml
+  - ~/.config/alacritty/grubox.yml
