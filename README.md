@@ -22,7 +22,7 @@ unzip ~/Downloads/Meslo.zip -d ~/.local/share/fonts/nerd-fonts/
 fc-cache -vf
 ```
 
-## DIR_COLORS
+## dir_colors
 ```
 stow dir_colors
 ```
