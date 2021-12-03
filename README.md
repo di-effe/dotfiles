@@ -1,9 +1,9 @@
 # dotfiles
 
-clone in ~/
+
 ```
-/home/<user>/dotfiles
-cd /home/<user>/dotfiles
+clone in git@github.com:di-effe/dotfiles.git ~
+cd ~/dotfiles
 ```
 
 ## Garuda [restore] 
