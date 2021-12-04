@@ -1,7 +1,7 @@
 # dotfiles
 
 ```
-clone in git@github.com:di-effe/dotfiles.git ~
+git clone in git@github.com:di-effe/dotfiles.git ~
 cd ~/dotfiles
 ```
 
