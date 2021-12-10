@@ -168,12 +168,11 @@ pacstrap /mnt base linux linux-firmware
 pacstrap /mnt grub grub-btrfs btrfs-progs os-prober efibootmgr
 pacstrap /mnt base-devel linux-headers 
 pacstrap /mnt snapper snap-pac
-pacstrap /mnt sudo nano vim fish starship neofetch reflector git alacritty 
-pacstrap /mnt htop wget rust bat cups exa emacs fd lolcat feh nitrogen
+pacstrap /mnt sudo nano vim neovim fish starship reflector git alacritty curl wget htop bat exa fd feh 
 pacstrap /mnt adobe-source-code-pro-fonts adobe-source-sans-fonts otf-font-awesome ttf-ubuntu-font-family ttf-dejavu ttf-liberation noto-fonts
 pacstrap /mnt man-db man-pages texinfo
-pacstrap /mnt networkmanager network-manager-applet bluez bluez-utils  wpa_supplicant dialog mtools dosfstools
-pacstrap /mnt xorg-server xorg-xinit xorg-apps xdg-utils xdg-user-dirs lxappearance lxsession xdotool  xterm
+pacstrap /mnt networkmanager network-manager-applet bluez bluez-utils wpa_supplicant dialog mtools dosfstools
+pacstrap /mnt xorg-server xorg-xinit xorg-apps xdg-utils xdg-user-dirs lxappearance lxsession xdotool xterm
 
 ```
 
@@ -323,22 +322,14 @@ sudo pacman -S xf86-video-vmware virtualbox-guest-utils theme
 sudo systemctl enable vboxservice.service
 ```
 
-Configure AUR
+
+Configure Paru
 ```
 mkdir AUR
 cd AUR
 git clone https://aur.archlinux.org/paru.git
 cd paru
 makepkg -sic
-```
-
-Configure Snap
-```
-git clone https://aur.archlinux.org/snapd.git
-cd snapd
-makepkg -si
-sudo systemctl enable --now snapd.socket
-sudo ln -s /var/lib/snapd/snap /snap
 ```
 
 Configure Yay
@@ -385,78 +376,50 @@ sudo systemctl start snapper-cleanup.timer
 
 
 
-
-# Arch [Qtile] 
-Ref: https://github.com/antoniosarosi/dotfiles
-
-## Install Qtile
-Ref: https://github.com/antoniosarosi/dotfiles
-```
-sudo pacman -S sddm qtile pacman-contrib python-pip volumeicon rofi papirus-icon-theme pamixer udiskie ntfs-3g
-sudo pacman -S --needed qt5-graphicaleffects qt5-quickcontrols2 qt5-svg ttf-dejavu ttf-liberation noto-fonts pulseaudio pavucontrol thunar ranger feh libnotify notification-daemon
-yay -S nerd-fonts-ubuntu-mono 
-pip install psutil
-sudo systemctl enable sddm
-mkdir -p ~/.config/qtile/
-#cp /usr/share/doc/qtile/default_config.py ~/.config/qtile/config.py
-```
-
-```
-
-git clone https://github.com/antoniosarosi/dotfiles.git
-cp -r dotfiles/.config/qtile ~/.config
-git clone https://github.com/davatorium/rofi-themes.git
-sudo cp rofi-themes/User\ Themes/* /usr/share/rofi/themes
-(Delete line font: "Knack Nerd Font 14"; from /usr/share/rofi/themes/onedark.rasi)
-```
+# LeftWM
 
 
-## SDDM theme and wallpaper
+## Xorg and tools (should be already installed)
 ```
-git clone https://aur.archlinux.org/sddm-sugar-candy-git.git
-cd sddm-sugar-candy-git
-makepkg -si
-sudo nano /etc/sddm.conf
-```
-Add
-```
-[Theme]
-Current=sugar-candy
+sudo pacman -S --needed networkmanager network-manager-applet bluez bluez-utils wpa_supplicant 
+sudo pacman -S --needed xorg-server xorg-xinit xorg-apps xdg-utils xdg-user-dirs lxappearance lxsession xdotool 
 ```
 
-##
-Wallpapers
+## LeftWM
 ```
-sudo snap install wonderwall
+?? curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+paru -S --needed leftwm polybar picom-ibhagwan-git
+sudo pacman -S --needed dmenu rofi feh
+cp /etc/X11/xinit/xinitrc ~/.xinitrc
 ```
-
-## Qtile autostart
-
-Add at the beginning of ~/.config/qtile/config.py
+Edit ~/.xinitrc removing default stuff in the end and adding
 ```
-import os
-import subprocess
-from libqtile import hook
-
-@hook.subscribe.startup_once
-def autostart():
-    home = os.path.expanduser('~')
-    subprocess.Popen([home + '/.config/qtile/autostart.sh'])
+exec dbus-launch leftwm
 ```
 
-Create ~/.config/qtile/config.py and chmox +x
 ```
-#!/usr/bin/env bash 
+mkdir ~/Git
+cd ~/Git
+git clone https://github.com/di-effe/amber.git
+mkdir ~/.config/leftwm/themes
+cp -r ./amber/ ~/.config/leftwm/themes/
+ln -s ~/.config/leftwm/themes/amber ~/.config/leftwm/themes/current
+cp ~/.config/leftwm/themes/amber/config.toml ~/.config/leftwm/
+sudo reboot now
+```
 
-# Start compositor (use picom --no-vsync & in VMs)
-picom &
-# Set wallpaper with nitrogen
-nitrogen --restore &
+## Nerd fonts
+
 ```
+git clone https://github.com/ryanoasis/nerd-fonts.git
+cd nerd-fonts
+./install.sh
+```
+
 
 
 ## Browser & widevine rdm
-sudo pacman -S qutebrowser
+sudo pacman -S brave
 git clone https://aur.archlinux.org/chromium-widevine.git
 makepkg -si
 
@@ -469,77 +432,6 @@ makepkg -si
 
 
 
-
-
-
-
-Install snapper gui
-```
-sudo pacman -S python3 gtk3 python-dbus python-gobject python-setuptools gtksourceview3
-git clone https://github.com/ricardo-vieira/snapper-gui/
-cd snapper-gui/
-sudo python3 setup.py install
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Arch [Awesome] 
-
-
-
-sudo pacman -S --needed base-devel git
-git clone https://aur.archlinux.org/awesome-git.git
-cd awesome-git
-makepkg -fsri
-mkdir -p ~/.config/awesome/
-cp /etc/xdg/awesome/rc.lua ~/.config/awesome/
-
-
-git clone https://aur.archlinux.org/picom-git.git
-cd picom-git
-makepkg -fsri
---OR
-git clone https://aur.archlinux.org/picom-ibhagwan-git.git
-cd picom-ibhagwan-git
-makepkg -fsri
-
-
-git clone https://aur.archlinux.org/nerd-fonts-inter.git
-cd picom-git
-makepkg -fsri
-
-sudo pacman -S --needed sddm rofi alsa-utils pulseaudio pulseaudio-alsa mpd mpc maim feh xclip imagemagick 
-sudo pacman -S --needed redshift iw ffmpeg kitty firefox python-pip
-sudo pacman -S --needed dolphin nemo vim neovim ncmpcpp lollypop 
-sudo pacman -S --needed blueman xfce4-power-manager upower
-sudo systemctl enable sddm
-mv ~/.config/awesome ~/.config/awesome.base
-mkdir ~/.config/awesome
-
-git clone --depth 1 https://github.com/manilarome/the-glorious-dotfiles/
-
-# Use the Floppy setup
-cp -r the-glorious-dotfiles/config/awesome/floppy/* $HOME/.config/awesome
-
-# Use the GNawesOME setup
-cp -r the-glorious-dotfiles/config/awesome/gnawesome/* $HOME/.config/awesome
-
-# Use the Linear setup
-cp -r the-glorious-dotfiles/config/awesome/linear/* $HOME/.config/awesome
-
-# Use the Surreal setup
-cp -r the-glorious-dotfiles/config/awesome/surreal/* $HOME/.config/awesome
 
 
 
