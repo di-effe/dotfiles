@@ -24,6 +24,7 @@ paru -S --needed font-manager-git greetd-git greetd-tuigreet lemonbar-xft-git ne
 ## .config
 - alacritty
 - fish
+- zsh
 - nvim
 - starship
 
