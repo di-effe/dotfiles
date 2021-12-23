@@ -1,4 +1,5 @@
 # dotfiles
+* ArcolinuxB LeftWM* 
 
 ```
 git clone in git@github.com:di-effe/dotfiles.git ~
@@ -9,49 +10,30 @@ cd ~/dotfiles
 
 ## Utilities
 ```
-pacman -Syu
-sudo pacman -S --needed stow fish fisher exa bat wget alacritty neovim starship git base-devel feh dmenu polybar blueman rofi xdg-user-dirs-gtk mate-polkit xfce4-settings xfce4-power-manager mate-power-manager mate-settings-daemon network-manager-applet pulseaudio thunar gvfs gvfs-smb pavucontrol lxappearance bleachbit lxtask pamixer betterlockscreen
-git clone https://aur.archlinux.org/yay.git
-cd yay
+pacman -S --needed $(comm -12 <(pacman -Slq | sort) <(sort pkglist.txt))
+
+mkdir ~/Git
+cd ~/Git
+git clone https://aur.archlinux.org/paru.git
+cd paru
 makepkg -si
-```
 
-## LeftWM
+paru -S --needed font-manager-git greetd-git greetd-tuigreet lemonbar-xft-git nerd-fonts-complete starship-git 
 
-Window Manager
-```
-yay -S --needed leftwm
-mkdir -p ~/.config/leftwm/themes
-```
-
-Theme
-```
-yay -S picom-ibhagwan-git
-TBD
-
-```
-
-
-
-## Nerd Fonts
-```
-git clone https://github.com/ryanoasis/nerd-fonts.git
-cd nerd-fonts
-./install.sh
-```
 
 ## .config
 - alacritty
 - fish
 - nvim
 - starship
-```
-stow config
-```
 
-## x11
-- .xinitrc
 ```
-stow x11
+mv ~/.config/alacritty/alacritty.yml ~/.config/alacritty/alacritty.yml.back
+mv ~/.config/fish ~/.config/fish.bak
+mv ~/.config/nvim ~/.config/nvim.bak
+mv ~/.config/starship.toml ~/.config/nvstarship.toml.bak
+mv ~/.config/zsh ~/.config/zsh.bak
+mv ~/.zshenv ~/.zshenv.bak
+stow config
 ```
 

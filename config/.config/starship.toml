@@ -38,6 +38,6 @@ disabled = true
 
 
 [character]
-success_symbol = '[❯](bold #83a598)'
+success_symbol = '[❯](bold #ffb300)'
 error_symbol = '[❯](bold #fb4934)'
 vicmd_symbol = '[❮](bold #98971a)'
