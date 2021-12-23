@@ -19,7 +19,7 @@ cd paru
 makepkg -si
 
 paru -S --needed font-manager-git greetd-git greetd-tuigreet lemonbar-xft-git nerd-fonts-complete starship-git 
-
+```
 
 ## .config
 - alacritty
